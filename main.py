@@ -15,7 +15,7 @@ COLLISION_DISTANCE = 27
 
 pygame.init()
 
-screen= pygame.display.set_mod((SCREEN_WIDTH, SCREEN_HEIGHT))
+screen= pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 background= pygame.image.load('bg.png')
 
@@ -40,7 +40,7 @@ for i in range(num_of_enemies):
     enemyX_cgange.append(ENEMY_SPEED_X)
     enemyY_change.append(ENEMY_SPEED_Y)
 
-bulletImg= pyagme.image.load('bullet.png')
+bulletImg= pygame.image.load('bullet.png')
 bulletX= 0
 bulletY= PLAYER_START_Y
 bulletX_change= 0
@@ -110,3 +110,23 @@ while running:
             if enemyX[i] <= 0 or enemyX[i] >= SCREEN_WIDTH - 64:
                 enemyX_cgange *= -1
                 enemyY[i] += enemyY_change[i]
+            if isCollision(enemyX[i], enemyY[i], bulletX, bulletY):
+                bulletY = PLAYER_START_Y
+                bullet_state = "ready"
+                score_value += 1
+                enemyX[i] = random.randint(0, SCREEN_WIDTH - 64)
+                enemyY[i] = random.randint(ENEMY_START_Y_MIN, ENEMY_START_Y_MAX)
+
+            enemy(enemyX[i], enemyY[i], i)
+
+    # Bullet Movement
+        if bulletY <= 0:
+            bulletY = PLAYER_START_Y
+            bullet_state = "ready"
+        elif bullet_state == "fire":
+            fire_bullet(bulletX, bulletY)
+            bulletY -= bulletY_change
+
+        player(playerX, playerY)
+        show_score(textX, textY)
+        pygame.display.update()
